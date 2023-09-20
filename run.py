@@ -39,4 +39,4 @@ if __name__ == '__main__':
 
     logging.info('starting game')
     game = Yahtzee(4)
-    logging.info('game started')
+    game.play_game()

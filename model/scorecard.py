@@ -7,7 +7,11 @@ class ScoreCard:
         self.lower_section = LowerSection()
 
     def get_total(self):
-        return self.upper_section.get_total() + self.lower_section.get_total()
+        return self.upper_section.get_total_no_bonus() + self.lower_section.get_total()
+
+    def fill_first_none(self, value: int):
+        if not self.upper_section.set_first_none(value):
+            self.lower_section.set_first_none(value)
 
 
 class UpperSection:
@@ -19,17 +23,30 @@ class UpperSection:
         self.fives: Optional[int] = None
         self.sixes: Optional[int] = None
 
-    def get_total(self):
-        return self.get_upper_total() + self.get_bonus()
+    def set_first_none(self, value: int):
+        for attr, val in vars(self).items():
+            if val is None:
+                setattr(self, attr, value)
+                return True  # Property was set
+        return False  # No property was set
+
+    def get_total_no_bonus(self):
+        return self.get_total() + self.get_bonus()
 
     def get_bonus(self):
-        if self.get_upper_total() >= 63:
+        if self.get_total() >= 63:
             return 35
         else:
             return 0
 
-    def get_upper_total(self):
-        return self.aces + self.twos + self.threes + self.fours + self.fives + self.sixes
+    def get_total(self):
+        total = 0
+
+        for attr, val in vars(self).items():
+            if val is not None:
+                total += val
+
+        return total
 
 
 class LowerSection:
@@ -42,8 +59,21 @@ class LowerSection:
         self.yahtzee: Optional[int] = None
         self.chance: Optional[int] = None
 
+    def set_first_none(self, value: int):
+        for attr, val in vars(self).items():
+            if val is None:
+                setattr(self, attr, value)
+                return True  # Property was set
+        return False  # No property was set
+
     def get_total(self):
-        return self.three_of_a_kind + self.four_of_a_kind + self.full_house + self.small_straight + self.large_straight + self.yahtzee + self.chance + self.get_yahtzee_bonus()
+        total = 0
+
+        for attr, val in vars(self).items():
+            if val is not None:
+                total += val
+
+        return total
 
     def get_yahtzee_bonus(self):
         return self.yahtzee * 100

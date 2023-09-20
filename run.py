@@ -2,6 +2,8 @@ import logging
 
 from colorlog import ColoredFormatter
 
+from model.game import Yahtzee
+
 
 def setup_logger():
     logger = logging.getLogger()
@@ -34,4 +36,7 @@ def setup_logger():
 
 if __name__ == '__main__':
     setup_logger()
-    logging.info('It works!')
+
+    logging.info('starting game')
+    game = Yahtzee(4)
+    logging.info('game started')

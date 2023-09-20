@@ -2,15 +2,23 @@ import random
 
 from model.excpetion import AlreadyPlayedError
 from model.yathzeescorecard import YathzeeScoreCard
+from service import yahtzeeenv
+from service.yahtzeeenv import YahtzeeEnv
 
 
 class DecisionService:
     def __init__(self):
-        pass
+        self.rl: YahtzeeEnv = yahtzeeenv.YahtzeeEnv()
 
     def decide_optimal_play(self, dice_rolls: [int], score_card: YathzeeScoreCard) -> int:
         # find first thing that is not filled in
         # if nothing is filled in, find the thing that is most likely to be filled in
+
+        self.rl.reset()
+        done = False
+        while not done:
+            action = 4  # Random action for testing
+            obs, reward, done, _ = self.rl.step(action)
 
         return random.Random().randint(1, 13)
 

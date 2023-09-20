@@ -1,5 +1,4 @@
-from model.scorecard import YathzeeScoreCard
-
+from model.yathzeescorecard import YathzeeScoreCard
 from service.decisionservice import DecisionService
 
 

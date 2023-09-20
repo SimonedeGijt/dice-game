@@ -1,6 +1,7 @@
 import random
 
 from model.excpetion import AlreadyPlayedError
+from model.yahtzeescorecard import YahtzeeScoreCard
 from service import yahtzeeenv
 from service.yahtzeeenv import YahtzeeEnv
 

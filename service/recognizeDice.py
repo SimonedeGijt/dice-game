@@ -1,8 +1,7 @@
 import cv2
 import numpy as np
-from sklearn import cluster
 from PIL import Image
-import time
+from sklearn import cluster
 
 params = cv2.SimpleBlobDetector_Params()
 
@@ -80,12 +79,13 @@ def load_dice_img(lnk):
     im = np.asarray(im)
     return im
 
-frame =load_dice_img('../pictures/test0.jpg')
+
+frame = load_dice_img('/home/skikk/src/openValue/dice-game/tests/resources/pictures/test0.jpg')
 
 blobs = get_blobs(frame)
 dice = get_dice_from_blobs(blobs)
 out_frame = overlay_info(frame, dice, blobs)
 
-
+print('iets')
 # When everything is done, release the capture
 cv2.destroyAllWindows()

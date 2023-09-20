@@ -16,8 +16,8 @@ class YahtzeeEnv(gym.Env):
 
         # Define action and observation spaces
         self.action_space = spaces.Discrete(13)  # 13 different scoring categories
-        self.observation_space = spaces.Box(low=np.array([0, 0, 0, 0, 0, 0]),
-                                            high=np.array([5, 5, 5, 5, 5, 5]),
+        self.observation_space = spaces.Box(low=np.array([1, 1, 1, 1, 1, 1] + [-1] * 13),
+                                            high=np.array([6, 6, 6, 6, 6, 6] + [50] * 13),
                                             dtype=np.int)
 
         # Initialize game-specific variables

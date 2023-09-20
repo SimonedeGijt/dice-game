@@ -127,9 +127,6 @@ pip-selfcheck.json
 # Mongo Explorer plugin:
 .idea/mongoSettings.xml
 
-# resources
-resources/
-
 .idea/
 
 ## File-based project format:

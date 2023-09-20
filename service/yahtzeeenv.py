@@ -1,10 +1,13 @@
+from collections import Counter
 from typing import Optional
 
 import gym
-from gym import spaces
 import numpy as np
-from gym.core import ObsType
-from gym.spaces import Tuple
+from gym import spaces
+
+from model.excpetion import AlreadyPlayedError
+from model.game import Yahtzee
+from service.decisionservice import DecisionService
 
 
 class YahtzeeEnv(gym.Env):
@@ -13,34 +16,48 @@ class YahtzeeEnv(gym.Env):
 
         # Define action and observation spaces
         self.action_space = spaces.Discrete(13)  # 13 different scoring categories
-        self.observation_space = spaces.MultiBinary(30)  # Represent the dice
+        self.observation_space = spaces.Box(low=np.array([0, 0, 0, 0, 0, 0]),
+                                            high=np.array([5, 5, 5, 5, 5, 5]),
+                                            dtype=np.int)
 
         # Initialize game-specific variables
-        self.dice = np.zeros(5, dtype=int)
-        self.roll_count = 0
-        self.score = 0
-        self.done = False
+        self.game = Yahtzee(1)
+        self.decision_service = DecisionService()
+        self.dice = self.game.recognition_service.dice_rols(None)
 
     def reset(self, seed: Optional[int] = None, options: Optional[dict] = None):
         # Reset the game state
-        self.dice = np.zeros(5, dtype=int)
-        self.roll_count = 0
-        self.score = 0
-        self.done = False
-        return self._get_observation()
+        self.game = Yahtzee(1)
+        return self._get_state()
 
-    def step(self, action):
-        # Implement the game logic for taking an action
-        # Calculate reward, update state, and check for termination
-        pass
+    def step(self, action: int):
+        # Store the total score before the action
 
-    def render(self):
-        # Optional method for rendering the game state
-        pass
+        prev_score = self.game.players[0].get_total()  # one player is assumed
+        reward = 0
+        try:
+            # play the action in the round
+            self.decision_service.decision_to_action(action, self.dice, self.game.players[0].score_card)
+        except AlreadyPlayedError:
+            # a move was tried that is not allowed
+            reward = -500
 
-    def _get_observation(self):
-        # Return the current game state (observation)
-        pass
+        if reward == 0:
+            # Calculate the reward as the difference in score
+            reward = self.game.players[0].get_total() - prev_score
 
+        self.dice = self.game.recognition_service.dice_rols(None)
+        state = self._get_state()
+
+        # Check if the game is over
+        done = self.game.is_finished()
+
+        return state, reward, done, {}
+
+    def _get_state(self, ):
+        # Convert the dice rolls to the frequency count representation
+        counts = Counter(self.dice)
+        state = [counts[i] for i in range(1, 7)]
+        return np.array(state)
 
 # Example usage:

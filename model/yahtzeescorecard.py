@@ -9,6 +9,10 @@ class YahtzeeScoreCard:
         self.upper_section = UpperSection()
         self.lower_section = LowerSection()
 
+    def is_full(self) -> bool:
+        return all([val is not None for attr, val in vars(self.upper_section).items()]) and \
+            all([val is not None for attr, val in vars(self.lower_section).items()])
+
     def card_points(self):
         return self.upper_section.get_total_no_bonus() + self.lower_section.get_total()
 

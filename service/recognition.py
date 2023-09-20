@@ -1,6 +1,11 @@
+from random import Random
+
+
 class RecognitionService:
     def __init__(self, ):
         pass
 
-    def predict(self, image) -> [int]:
-        return [1, 2, 3, 4, 5, 6]
+    def dice_rols(self, image, dice_needed: int = 5) -> [int]:
+        random = Random()
+
+        return [random.randint(1, 6) for _ in range(dice_needed)]

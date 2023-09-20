@@ -6,7 +6,7 @@ class ScoreCard:
         self.upper_section = UpperSection()
         self.lower_section = LowerSection()
 
-    def get_total(self):
+    def card_points(self):
         return self.upper_section.get_total_no_bonus() + self.lower_section.get_total()
 
     def fill_first_none(self, value: int):

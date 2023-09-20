@@ -4,7 +4,7 @@ import random
 from model.player import Player
 from service.recognition import RecognitionService
 
-possible_player_names = ['Simone', 'Stefan', 'Dennis', 'Roy', 'Pieter', 'Marcel', 'Julian', 'Martin', 'Piter', 'Thijs', 'Nicolette']
+possible_player_names = ['Simone', 'Stefan', 'Dennis', 'Roy', 'Pieter', 'Marcel', 'Julian', 'Martin', 'Piter', 'Thijs-bleh', 'Nicolette']
 
 
 class Yahtzee:
@@ -18,12 +18,14 @@ class Yahtzee:
             randint = random.Random().randint(0, len(possible_player_names) - 1)
             self.players.append(Player(possible_player_names[randint]))
 
-        logging.info(f'started with: \n {[player.name for player in self.players]}')
+        logging.info(f'started with: {[player.name for player in self.players]}')
 
     def play_round(self):
-        logging.info(f'start of round, current scores: \n {[player.get_total() for player in self.players]}')
+        logging.info('playing round')
         for player in self.players:
             player.play_round(self.recognition_service.dice_rols(None))
+
+        logging.info(f'round finished, scores: {[player.get_total() for player in self.players]}')
 
     def play_game(self):
         for player in self.players:

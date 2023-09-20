@@ -4,7 +4,7 @@ from typing import Optional
 from model.excpetion import AlreadyPlayedError
 
 
-class YathzeeScoreCard:
+class YahtzeeScoreCard:
     def __init__(self):
         self.upper_section = UpperSection()
         self.lower_section = LowerSection()

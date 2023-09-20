@@ -1,20 +1,21 @@
 import random
 
+from model.yathzeescorecard import YahtzeeScoreCard
+
 from model.excpetion import AlreadyPlayedError
-from model.yathzeescorecard import YathzeeScoreCard
 
 
 class DecisionService:
     def __init__(self):
         pass
 
-    def decide_optimal_play(self, dice_rolls: [int], score_card: YathzeeScoreCard) -> int:
+    def decide_optimal_play(self, dice_rolls: [int], score_card: YahtzeeScoreCard) -> int:
         # find first thing that is not filled in
         # if nothing is filled in, find the thing that is most likely to be filled in
 
         return random.Random().randint(1, 13)
 
-    def decision_to_action(self, decision: int, dice_rolls: [int], score_card: YathzeeScoreCard) -> int:
+    def decision_to_action(self, decision: int, dice_rolls: [int], score_card: YahtzeeScoreCard) -> int:
         try:
             if decision == 1:
                 score_card.play_ones(dice_rolls)

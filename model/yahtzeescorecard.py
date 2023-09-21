@@ -9,6 +9,11 @@ class YahtzeeScoreCard:
         self.upper_section = UpperSection()
         self.lower_section = LowerSection()
 
+    def __str__(self):
+        upper_section_str = "Upper Section:\n" + "\n".join([f"    {k}: {v if v is not None else 'None'}" for k, v in vars(self.upper_section).items()])
+        lower_section_str = "Lower Section:\n" + "\n".join([f"    {k}: {v if v is not None else 'None'}" for k, v in vars(self.lower_section).items()])
+        return f"{upper_section_str}\n\n{lower_section_str}"
+
     def is_full(self) -> bool:
         return all([val is not None for attr, val in vars(self.upper_section).items()]) and \
             all([val is not None for attr, val in vars(self.lower_section).items()])
@@ -16,37 +21,67 @@ class YahtzeeScoreCard:
     def card_points(self):
         return self.upper_section.get_total_no_bonus() + self.lower_section.get_total()
 
-    def play_ones(self, dice_rolls: [int]):
+    def play_ones(self, dice_rolls: [int], trial: bool = False) -> int:
         if self.upper_section.aces is not None:
             raise AlreadyPlayedError('Already played ones')
-        self.upper_section.aces = sum([dice for dice in dice_rolls if dice == 1])
+        points = sum([dice for dice in dice_rolls if dice == 1])
 
-    def play_twos(self, dice_rolls: [int]):
+        if not trial:
+            self.upper_section.aces = points
+
+        return points
+
+    def play_twos(self, dice_rolls: [int], trial: bool = False) -> int:
         if self.upper_section.twos is not None:
             raise AlreadyPlayedError('Already played twos')
-        self.upper_section.twos = sum([dice for dice in dice_rolls if dice == 2])
+        points = sum([dice for dice in dice_rolls if dice == 2])
 
-    def play_threes(self, dice_rolls: [int]):
+        if not trial:
+            self.upper_section.twos = points
+
+        return points
+
+    def play_threes(self, dice_rolls: [int], trial: bool = False) -> int:
         if self.upper_section.threes is not None:
             raise AlreadyPlayedError('Already played threes')
-        self.upper_section.threes = sum([dice for dice in dice_rolls if dice == 3])
+        points = sum([dice for dice in dice_rolls if dice == 3])
 
-    def play_fours(self, dice_rolls: [int]):
+        if not trial:
+            self.upper_section.threes = points
+
+        return points
+
+    def play_fours(self, dice_rolls: [int], trial: bool = False) -> int:
         if self.upper_section.fours is not None:
             raise AlreadyPlayedError('Already played fours')
-        self.upper_section.fours = sum([dice for dice in dice_rolls if dice == 4])
+        points = sum([dice for dice in dice_rolls if dice == 4])
 
-    def play_fives(self, dice_rolls: [int]):
+        if not trial:
+            self.upper_section.fours = points
+
+        return points
+
+    def play_fives(self, dice_rolls: [int], trial: bool = False) -> int:
         if self.upper_section.fives is not None:
             raise AlreadyPlayedError('Already played fives')
-        self.upper_section.fives = sum([dice for dice in dice_rolls if dice == 5])
+        points = sum([dice for dice in dice_rolls if dice == 5])
 
-    def play_sixes(self, dice_rolls: [int]):
+        if not trial:
+            self.upper_section.fives = points
+
+        return points
+
+    def play_sixes(self, dice_rolls: [int], trial: bool = False) -> int:
         if self.upper_section.sixes is not None:
             raise AlreadyPlayedError('Already played sixes')
-        self.upper_section.sixes = sum([dice for dice in dice_rolls if dice == 6])
+        points = sum([dice for dice in dice_rolls if dice == 6])
 
-    def play_three_of_a_kind(self, dice_rolls: [int]):
+        if not trial:
+            self.upper_section.sixes = points
+
+        return points
+
+    def play_three_of_a_kind(self, dice_rolls: [int], trial: bool = False) -> int:
         if self.lower_section.three_of_a_kind is not None:
             raise AlreadyPlayedError('Already played three of a kind')
 
@@ -54,11 +89,16 @@ class YahtzeeScoreCard:
         count = Counter(dice_rolls)
         three_of_a_kind = [key for key, val in count.items() if val >= 3]
         if len(three_of_a_kind) > 0:
-            self.lower_section.three_of_a_kind = sum(dice_rolls)
+            points = sum(dice_rolls)
         else:
-            self.lower_section.three_of_a_kind = 0
+            points = 0
 
-    def play_four_of_a_kind(self, dice_rolls: [int]):
+        if not trial:
+            self.lower_section.three_of_a_kind = points
+
+        return points
+
+    def play_four_of_a_kind(self, dice_rolls: [int], trial: bool = False) -> int:
         if self.lower_section.four_of_a_kind is not None:
             raise AlreadyPlayedError('Already played four of a kind')
 
@@ -66,11 +106,16 @@ class YahtzeeScoreCard:
         count = Counter(dice_rolls)
         four_of_a_kind = [key for key, val in count.items() if val >= 4]
         if len(four_of_a_kind) > 0:
-            self.lower_section.four_of_a_kind = sum(dice_rolls)
+            points = sum(dice_rolls)
         else:
-            self.lower_section.four_of_a_kind = 0
+            points = 0
 
-    def play_full_house(self, dice_rolls: [int]):
+        if not trial:
+            self.lower_section.four_of_a_kind = points
+
+        return points
+
+    def play_full_house(self, dice_rolls: [int], trial: bool = False) -> int:
         if self.lower_section.full_house is not None:
             raise AlreadyPlayedError('Already played full house')
 
@@ -79,52 +124,77 @@ class YahtzeeScoreCard:
         three_of_a_kind = [key for key, val in count.items() if val >= 3]
         two_of_a_kind = [key for key, val in count.items() if val >= 2]
         if len(three_of_a_kind) > 0 and len(two_of_a_kind) > 1:  # they can't both be 1, they are the same pair
-            self.lower_section.full_house = 25
-
+            points = 25
         else:
-            self.lower_section.full_house = 0
+            points = 0
 
-    def play_small_straight(self, dice_rolls: [int]):
+        if not trial:
+            self.lower_section.full_house = points
+
+        return points
+
+    def play_small_straight(self, dice_rolls: [int], trial: bool = False) -> int:
         if self.lower_section.small_straight is not None:
             raise AlreadyPlayedError('Already played small straight')
 
         arr = sorted(set(dice_rolls))  # Sort and remove duplicates
 
         # Check for the possible straights
+        points = None
         for seq in [[1, 2, 3, 4], [2, 3, 4, 5], [3, 4, 5, 6]]:
             if all(num in arr for num in seq):
-                self.lower_section.small_straight = 30
+                points = 30
                 break
 
-        if self.lower_section.small_straight is None:
-            self.lower_section.small_straight = 0
+        if points is None:
+            points = 0
 
-    def play_large_straight(self, dice_rolls: [int]):
+        if not trial:
+            self.lower_section.small_straight = points
+
+        return points
+
+    def play_large_straight(self, dice_rolls: [int], trial: bool = False) -> int:
         if self.lower_section.large_straight is not None:
             raise AlreadyPlayedError('Already played large straight')
 
         arr = sorted(set(dice_rolls))
         if arr in [[1, 2, 3, 4, 5], [2, 3, 4, 5, 6]]:
-            self.lower_section.large_straight = 40
+            points = 40
         else:
-            self.lower_section.large_straight = 0
+            points = 0
 
-    def play_yahtzee(self, dice_rolls: [int]):
+        if not trial:
+            self.lower_section.large_straight = points
+
+        return points
+
+    def play_yahtzee(self, dice_rolls: [int], trial: bool = False) -> int:
         if self.lower_section.yahtzee is not None:
             raise AlreadyPlayedError('Already played yahtzee')
 
         count = Counter(dice_rolls)
         yahtzee = [key for key, val in count.items() if val >= 5]
         if len(yahtzee) > 0:
-            self.lower_section.yahtzee = 50
+            points = 50
         else:
-            self.lower_section.yahtzee = 0
+            points = 0
 
-    def play_chance(self, dice_rolls: [int]):
+        if not trial:
+            self.lower_section.yahtzee = points
+
+        return points
+
+    def play_chance(self, dice_rolls: [int], trial: bool = False) -> int:
         if self.lower_section.chance is not None:
             raise AlreadyPlayedError('Already played chance')
 
-        self.lower_section.chance = sum(dice_rolls)
+        points = sum(dice_rolls)
+
+        if not trial:
+            self.lower_section.chance = points
+
+        return points
 
 
 class UpperSection:

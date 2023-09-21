@@ -3,6 +3,8 @@ import logging
 from colorlog import ColoredFormatter
 
 from model.game import Yahtzee
+from model.player import Player
+from service.decisionservice import RandomDecisionService, SmartDecisionService
 
 
 def setup_logger():
@@ -38,5 +40,13 @@ if __name__ == '__main__':
     setup_logger()
 
     logging.info('starting game')
-    game = Yahtzee(4)
+    players = [
+        Player('random1', RandomDecisionService()),
+        Player('random2', RandomDecisionService()),
+        Player('smart1', SmartDecisionService()),
+        Player('smart2', SmartDecisionService()),
+    ]
+    game = Yahtzee(4, players)
     game.play_game()
+
+    logging.info('finished game')

@@ -97,14 +97,14 @@ def find_dice_values(img, blur, min_contour):
 
     if(len(result) != 5):
 
-        cluster_var = 90
-        while len(result) != 5 and cluster_var < 120:
+        cluster_var = 120
+        while len(result) != 5 and cluster_var > 60:
             result = []
             if len(dice_dot_contours) > 0:
                 diceValues = find_contour_clusters(dice_dot_contours, cluster_var, 1)
                 for list in diceValues:
                     result.append(len(list))
-            cluster_var = cluster_var + 5
+            cluster_var = cluster_var - 5
 
     return result
 

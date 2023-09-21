@@ -1,9 +1,12 @@
-import cv2
 import numpy as np
 from sklearn.cluster import DBSCAN
-import pictureService
-
 import cv2
+
+import os
+env = os.getenv('ENV')
+print("Environement is: " + env)
+if(env != 'dev'):
+    import pictureService
 
 def find_contour_clusters(contours, epsilon, min_samples):
     # Extract centroid coordinates from contours
@@ -36,7 +39,7 @@ def find_contour_clusters(contours, epsilon, min_samples):
 def find_dice_values(img, blur):
 
     # Convert the image to grayscale
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(src=img, code=cv2.COLOR_BGR2GRAY)
 
     # Apply Gaussian blur to reduce noise
     blurred = cv2.GaussianBlur(gray, (blur, blur), 0)
@@ -72,8 +75,8 @@ def find_dice_values(img, blur):
 
     diceValues = find_contour_clusters(dice_dot_contours, 200, 1)
 
-    cv2.imshow("show contours",img)
-    cv2.waitKey()
+    #cv2.imshow("show contours",img)
+    #cv2.waitKey()
 
     result = []
 
@@ -82,17 +85,17 @@ def find_dice_values(img, blur):
 
     return result
 
-
-def recognizeDiceInImage():
-    fileName = "tempFile.jpg"
-    pictureService.takePicture(fileName)
-    img = cv2.imread(fileName)
-    dicevalues = find_dice_values(img,9)
-    if(len(dicevalues) != 5) :
-        dicevalues = find_dice_values(fileName, 15)
+def recognizeDiceInImage(fileName):
+    if(env == 'dev'):
+        img = cv2.imread(fileName)
+    else:
+        img = pictureService.takePicture()
+    dicevalues = find_dice_values(img,9) #blur = 9 is a magic number that seems to work for most
+    if(len(dicevalues) != 5) : #if we did not detect 5 dice add more blur
+        dicevalues = find_dice_values(img, 15) #blur = 15 seems to work for most other cases.
 
     print(dicevalues)
     return dicevalues
 
 
-recognizeDiceInImage()
+recognizeDiceInImage("")

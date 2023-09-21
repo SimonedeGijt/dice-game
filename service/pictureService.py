@@ -12,8 +12,8 @@ picam2.start()
 picam2.set_controls({'AfMode': controls.AfModeEnum.Continuous})
 
 
-def takePicture():
-    diceController.rollDice()
+def take_picture():
+    diceController.roll_dice()
     print("Waiting for steady dice and focus")
     time.sleep(5)
     image = picam2.capture_image("main")

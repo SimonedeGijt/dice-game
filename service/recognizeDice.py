@@ -97,5 +97,5 @@ def recognizeDiceInImage(fileName):
     print(dicevalues)
     return dicevalues
 
-
-recognizeDiceInImage("")
+if __name__ == "__main__":
+    recognizeDiceInImage("")

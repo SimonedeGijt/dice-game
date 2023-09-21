@@ -6,7 +6,7 @@ import numpy as np
 
 
 picam2 = Picamera2()
-camera_config = picam2.create_preview_configuration({'size':(3280,2464)})
+camera_config = picam2.create_preview_configuration({'size':(1920,1080)})
 picam2.configure(camera_config)
 picam2.start()
 picam2.set_controls({'AfMode': controls.AfModeEnum.Continuous})

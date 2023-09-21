@@ -92,7 +92,7 @@ def recognizeDiceInImage(fileName=''):
     if env == 'dev':
         img = cv2.imread(fileName)
     else:
-        img = pictureService.takePicture()
+        img = pictureService.take_picture()
     dicevalues = find_dice_values(img, 9)  # blur = 9 is a magic number that seems to work for most
     if len(dicevalues) != 5:  # if we did not detect 5 dice add more blur
         dicevalues = find_dice_values(img, 15)  # blur = 15 seems to work for most other cases.

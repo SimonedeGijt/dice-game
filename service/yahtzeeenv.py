@@ -19,6 +19,8 @@ class YahtzeeEnv(gym.Env):
         self.observation_space = spaces.Box(low=np.array([0, 0, 0, 0, 0, 0] + [-1] * 13),
                                             high=np.array([5, 5, 5, 5, 5, 5] + [50] * 13),
                                             dtype=np.int)
+        self.reward_range = (-500, 50)
+
 
         # Initialize game-specific variables
         self.game = Yahtzee(1)

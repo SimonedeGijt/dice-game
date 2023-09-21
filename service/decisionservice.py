@@ -62,8 +62,12 @@ class SmartDecisionService(RandomDecisionService):
         dice = game.get_dice_roll(player)
         best_option, best_score = self.find_best_action(dice, player)
 
-        best_option, best_score, dice = self.do_potential_re_roll(best_option, best_score, dice, game, player)
-        best_option, best_score, dice = self.do_potential_re_roll(best_option, best_score, dice, game, player)
+        best_option, best_score, new_dice = self.do_potential_re_roll(best_option, best_score, dice, game, player)
+
+        if dice != new_dice:
+            best_option, best_score, new_dice = self.do_potential_re_roll(best_option, best_score, new_dice, game, player)
+
+        dice = new_dice
 
         logging.debug(f'{player.name} chose {best_option} for {dice} with {best_score} points')
 
@@ -100,7 +104,7 @@ class SmartDecisionService(RandomDecisionService):
     def simulate_re_rolls(self, game, player, combination) -> (int, int):
         results = {}
 
-        for _ in range(15):
+        for _ in range(20):
             new_dice = game.get_dice_roll(player, False, 5 - len(combination))
             new_dice.extend(combination)
 

@@ -43,11 +43,11 @@ if __name__ == '__main__':
         # Player('random1', RandomDecisionService()),
         # Player('random2', RandomDecisionService()),
         Player('smart1', SmartDecisionService()),
-        Player('smart2', SmartDecisionService())
+        # Player('smart2', SmartDecisionService())
     ]
 
     winners_averages = {}
-    for i in range(1):
+    for i in range(10):
         logging.info(f'starting game {i}')
         game = Yahtzee(2, players)
         logging.info('finished game')
@@ -58,4 +58,8 @@ if __name__ == '__main__':
 
         winners_averages[winner.name].append(winner.get_total())
 
-    logging.info(f'averages: {winners_averages}, \naverage: {sum(winners_averages["smart1"]) / len(winners_averages["smart1"])}')
+    logging.info(f'averages: {winners_averages}, \n'
+                 f'average: {sum(winners_averages["smart1"]) / len(winners_averages["smart1"])} \n '
+                 f'max: {max(winners_averages["smart1"])} \n '
+                 f'min: {min(winners_averages["smart1"])}'
+                 )

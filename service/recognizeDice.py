@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 from sklearn.cluster import DBSCAN
 
-env = os.getenv('ENV', default='dev')
+env = os.getenv('ENV', 'dev')
 print("Environement is: " + env)
 if env != 'dev':
     import pictureService
@@ -39,8 +39,7 @@ def find_contour_clusters(contours, epsilon, min_samples):
 
     return list(clusters.values())
 
-
-def find_dice_values(img, blur):
+def find_dice_values(img, blur, min_contour):
     # Convert the image to grayscale
     gray = cv2.cvtColor(src=img, code=cv2.COLOR_BGR2GRAY)
 
@@ -57,49 +56,86 @@ def find_dice_values(img, blur):
 
     # Initialize an empty list to store results
     dice_dot_contours = []
-
+    displayImg = img.copy()
     for contour in contours:
-        x, y, w, h = cv2.boundingRect(contour)
-        cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+        #cv2.putText(img, cv2.contourArea(contour), (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1)
+
         # Filter out small contours
-        if cv2.contourArea(contour) > 1500:
+        if (cv2.contourArea(contour) > min_contour):
             # Get bounding box coordinates
             x, y, w, h = cv2.boundingRect(contour)
 
-            if (w > 100):
+
+            if (w > 100 or  h > 100): #filter out big images
+                cv2.rectangle(displayImg, (x, y), (x + w, y + h), (0, 255, 255), 2)
                 continue
 
-            # Crop the region of interest
+            if(w/h < 0.9 or h/w <0.9): #filter out non-square parts
+                cv2.rectangle(displayImg, (x, y), (x + w, y + h), (255, 255, 255), 2)
+                continue
+
             # roi = gray[y:y+h, x:x+w]
-            cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 2)
+            cv2.rectangle(displayImg, (x, y), (x + w, y + h), (255, 0, 0), 2)
 
             dice_dot_contours.append(contour)
+        else:
+            #print(cv2.contourArea(contour))
+            x, y, w, h = cv2.boundingRect(contour)
+            cv2.rectangle(displayImg, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-    diceValues = find_contour_clusters(dice_dot_contours, 200, 1)
-
-    # cv2.imshow("show contours",img)
-    # cv2.waitKey()
+    #cv2.imshow(f"show contours with blur:{blur}" ,displayImg)
+    #cv2.waitKey()
 
     result = []
 
-    for list in diceValues:
-        result.append(len(list))
+    cluster_var = 100
+    if len(dice_dot_contours) > 0:
+        diceValues = find_contour_clusters(dice_dot_contours, cluster_var, 1)
+        for list in diceValues:
+            result.append(len(list))
+
+    if(len(result) != 5):
+
+        cluster_var = 90
+        while len(result) != 5 and cluster_var < 120:
+            result = []
+            if len(dice_dot_contours) > 0:
+                diceValues = find_contour_clusters(dice_dot_contours, cluster_var, 1)
+                for list in diceValues:
+                    result.append(len(list))
+            cluster_var = cluster_var + 5
 
     return result
 
 
-def recognizeDiceInImage(fileName=''):
+def recognize_dice_in_image(file_name=''):
     if env == 'dev':
-        img = cv2.imread(fileName)
+        img = cv2.imread(file_name)
     else:
         img = pictureService.take_picture()
-    dicevalues = find_dice_values(img, 9)  # blur = 9 is a magic number that seems to work for most
-    if len(dicevalues) != 5:  # if we did not detect 5 dice add more blur
-        dicevalues = find_dice_values(img, 15)  # blur = 15 seems to work for most other cases.
 
-    print(dicevalues)
-    return dicevalues
+    blur = 9
+    min_contour = 250
+    dice_values = find_dice_values(img, blur, min_contour)
+    blur = 3
+    while(len(dice_values) != 5 and blur<21):
+        blur = blur + 2
+
+        if(blur >=17):
+            min_contour = 12
+        new_result = find_dice_values(img, blur, min_contour)
+        #cv2.imshow("show contours",img)
+
+        #cv2.waitKey()
+        if(len(new_result) == 5 or abs(len(new_result) - 5) < abs(len(dice_values)-5)):
+            dice_values = new_result
+
+    print(dice_values)
+
+    return dice_values
 
 
 if __name__ == "__main__":
-    recognizeDiceInImage("")
+    recognize_dice_in_image("/Users/weijs01/Techdays/dice-game/tests/resources/pictures2/test18.jpg")
+

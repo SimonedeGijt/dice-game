@@ -65,4 +65,4 @@ class Yahtzee:
 
         if is_re_roll:
             self.rolls[player] += 1
-        return self._dice_service.dice_rols(None, number_of_dice)
+        return self._dice_service.dice_rolls(None, number_of_dice)

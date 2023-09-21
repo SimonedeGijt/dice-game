@@ -39,6 +39,8 @@ if __name__ == '__main__':
     logging.info(f'----------')
     logging.info('GAME DONE')
 
+    agent.pickle_table()
+
     logging.info('\n\nSTART VALIDATING')
 
     state = env.reset()

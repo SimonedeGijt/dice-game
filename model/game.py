@@ -67,4 +67,6 @@ class Yahtzee:
 
         if is_real:
             self.rolls[player] += 1
-        return self._dice_service.dice_rols(None, number_of_dice)
+            return self._dice_service.dice_rols(None, number_of_dice)
+        else:
+            return [random.randint(1, 6) for _ in range(number_of_dice)]

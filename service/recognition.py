@@ -1,6 +1,8 @@
-from random import Random
 import os
-import recognizeDice
+from random import Random
+
+from service.recognizeDice import recognizeDiceInImage
+
 
 class DiceService:
     def __init__(self, ):
@@ -8,9 +10,9 @@ class DiceService:
 
     def dice_rols(self, image, dice_needed: int = 5) -> [int]:
         env = os.getenv('ENV')
-        if (env == 'dev'):
+        if env == 'dev':
             random = Random()
             return [random.randint(1, 6) for _ in range(dice_needed)]
         else:
-            diceResults = recognizeDice.recognizeDiceInImage("")
-            return diceResults[0:dice_needed]
+            dice_results = recognizeDiceInImage("")
+            return dice_results[0:dice_needed]

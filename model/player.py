@@ -1,6 +1,5 @@
-from model.game import Yahtzee
 from model.yahtzeescorecard import YahtzeeScoreCard
-from service.randomdecisionservice import RandomDecisionService
+from service.decisionservice import RandomDecisionService
 
 
 class Player:
@@ -16,5 +15,5 @@ class Player:
     def start_game(self):
         self.score_card = YahtzeeScoreCard()
 
-    def play_round(self, game: Yahtzee):
+    def play_round(self, game):
         self.score_card = self.decision_model.play_optimal_play(game, self)

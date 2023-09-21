@@ -1,13 +1,11 @@
 import random
 
 from model.excpetion import AlreadyPlayedError
-from model.game import Yahtzee
-from model.player import Player
 from model.yahtzeescorecard import YahtzeeScoreCard
 
 
 class RandomDecisionService:
-    def play_optimal_play(self, game: Yahtzee, player: Player) -> YahtzeeScoreCard:
+    def play_optimal_play(self, game, player) -> YahtzeeScoreCard:
         dice = game.get_dice_roll(player)
 
         valid_choice = 0

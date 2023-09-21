@@ -43,3 +43,6 @@ class Yahtzee:
                 winner = player
 
         return winner
+
+    def is_finished(self) -> bool:
+        return all([player.score_card.is_full() for player in self.players])

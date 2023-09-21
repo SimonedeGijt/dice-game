@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from sklearn.cluster import DBSCAN
+import pictureService
 
 import cv2
 
@@ -32,9 +33,7 @@ def find_contour_clusters(contours, epsilon, min_samples):
             clusters[label].append(contours[i])
 
     return list(clusters.values())
-def find_dice_values(image_path, blur):
-    # Read the image
-    img = cv2.imread(image_path)
+def find_dice_values(img, blur):
 
     # Convert the image to grayscale
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -84,9 +83,16 @@ def find_dice_values(image_path, blur):
     return result
 
 
-# Replace 'path_to_your_image.jpg' with the actual path of your image
-dicevalues = find_dice_values('/Users/weijs01/Techdays/dice-game/tests/resources/pictures/test1.jpg', 9)
-if(len(dicevalues) != 5) :
-    dicevalues = find_dice_values('/Users/weijs01/Techdays/dice-game/tests/resources/pictures/test1.jpg', 15)
+def recognizeDiceInImage():
+    fileName = "tempFile.jpg"
+    pictureService.takePicture(fileName)
+    img = cv2.imread(fileName)
+    dicevalues = find_dice_values(img,9)
+    if(len(dicevalues) != 5) :
+        dicevalues = find_dice_values(fileName, 15)
 
-print(dicevalues)
+    print(dicevalues)
+    return dicevalues
+
+
+recognizeDiceInImage()

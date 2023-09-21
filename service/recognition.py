@@ -14,5 +14,5 @@ class DiceService:
             random = Random()
             return [random.randint(1, 6) for _ in range(dice_needed)]
         else:
-            dice_results = recognizeDiceInImage("")
+            dice_results = recognizeDiceInImage()
             return dice_results[0:dice_needed]

@@ -88,7 +88,7 @@ def find_dice_values(img, blur):
     return result
 
 
-def recognizeDiceInImage(fileName):
+def recognizeDiceInImage(fileName=''):
     if env == 'dev':
         img = cv2.imread(fileName)
     else:

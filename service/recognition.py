@@ -8,7 +8,7 @@ class DiceService:
     def __init__(self, ):
         pass
 
-    def dice_rols(self, image, dice_needed: int = 5) -> [int]:
+    def dice_rolls(self, image, dice_needed: int = 5) -> [int]:
         env = os.getenv('ENV', 'dev')
         if env == 'dev':
             random = Random()

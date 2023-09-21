@@ -29,17 +29,17 @@ class YahtzeeEnv(gym.Env):
         self.round = 1
 
     def reset(self, seed: Optional[int] = None, options: Optional[dict] = None):
-        logging.info(f'Start with resetting env')
+        logging.debug(f'Start with resetting env')
         # Reset the game state
         self.game = Yahtzee(1)
         self.dice = self.game.get_dice_roll(self.game.players[0], False)
         self.round = 1
         info = {'reset_info': 'Environment reset successfully', 'options_used': options}
-        logging.info(info)
+        logging.debug(info)
         return self._get_state(), info
 
     def step(self, action: int):
-        logging.info(f'-> Start with round {self.round}, perform action {action}')
+        logging.debug(f'-> Start with round {self.round}, perform action {action}')
         # Store the total score before the action
         prev_score = self.game.players[0].get_total()  # one player is assumed
         reward = 0
@@ -54,7 +54,7 @@ class YahtzeeEnv(gym.Env):
             # Calculate the reward as the difference in score
             reward = self.game.players[0].get_total() - prev_score
 
-        logging.info(f'Reward = {reward}')
+        logging.debug(f'Reward = {reward}')
 
         self.dice = self.game.get_dice_roll(self.game.players[0], False)
         state = self._get_state()
@@ -65,7 +65,7 @@ class YahtzeeEnv(gym.Env):
         truncated = False
         self.round += 1
 
-        logging.info(info)
+        logging.debug(info)
         return state, reward, done, truncated, info
 
     def _get_state(self, ):

@@ -10,7 +10,7 @@ possible_player_names = ['Simone', 'Stefan', 'Dennis', 'Roy', 'Pieter', 'Marcel'
 
 class Yahtzee:
     def __init__(self, number_of_players: int, players: [Player] = None):
-        logging.info(f'starting game with {number_of_players} players')
+        logging.debug(f'starting game with {number_of_players} players')
         self._dice_service: DiceService = DiceService()
         self.rolls = {}  # dict storing the number of rolls of the current round for each player
         self.round_number = 0
@@ -24,17 +24,17 @@ class Yahtzee:
                 randint = random.Random().randint(0, len(possible_player_names) - 1)
                 self.players.append(Player(possible_player_names[randint]))
 
-        logging.info(f'started with: {[player.name for player in self.players]}')
+        logging.debug(f'started with: {[player.name for player in self.players]}')
 
     def play_round(self):
         self.rolls = {}
         self.round_number += 1
 
-        logging.info(f'playing round {self.round_number}')
+        logging.debug(f'playing round {self.round_number}')
         for player in self.players:
             player.play_round(self)
 
-        logging.info(f'round finished, scores: {[player.get_total() for player in self.players]}')
+        logging.debug(f'round finished, scores: {[player.get_total() for player in self.players]}')
 
     def play_game(self):
         for player in self.players:
@@ -43,8 +43,8 @@ class Yahtzee:
         for i in range(13):
             self.play_round()
 
-        logging.info(f'winner is {self.get_winner().name}')
-        logging.info(f'card for {self.get_winner().name}: \n {self.get_winner().score_card}')
+        logging.debug(f'winner is {self.get_winner().name}')
+        logging.debug(f'card for {self.get_winner().name}: \n {self.get_winner().score_card}')
 
     def get_winner(self) -> Player:
         winner = self.players[0]
@@ -65,4 +65,4 @@ class Yahtzee:
 
         if is_re_roll:
             self.rolls[player] += 1
-        return self._dice_service.dice_rols(None, number_of_dice)
+        return self._dice_service.dice_rolls(None, number_of_dice)

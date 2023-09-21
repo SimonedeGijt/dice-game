@@ -28,6 +28,7 @@ class YahtzeeEnv(gym.Env):
     def reset(self, seed: Optional[int] = None, options: Optional[dict] = None):
         # Reset the game state
         self.game = Yahtzee(1)
+        self.dice = self.game.recognition_service.dice_rols(None)
         return self._get_state()
 
     def step(self, action: int):

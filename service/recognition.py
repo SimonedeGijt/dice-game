@@ -1,7 +1,7 @@
 from random import Random
 
 
-class RecognitionService:
+class DiceService:
     def __init__(self, ):
         pass
 

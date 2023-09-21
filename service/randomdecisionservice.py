@@ -1,22 +1,26 @@
 import random
 
 from model.excpetion import AlreadyPlayedError
+from model.game import Yahtzee
+from model.player import Player
 from model.yahtzeescorecard import YahtzeeScoreCard
 
 
 class RandomDecisionService:
-    def play_optimal_play(self, dice_rolls: [int], score_card: YahtzeeScoreCard) -> YahtzeeScoreCard:
+    def play_optimal_play(self, game: Yahtzee, player: Player) -> YahtzeeScoreCard:
+        dice = game.get_dice_roll(player)
+
         valid_choice = 0
         while valid_choice == 0:
-            decision = self.decide(dice_rolls, score_card)
+            decision = self.decide(dice, player.score_card)
             try:
-                self.decision_to_action(decision, dice_rolls, score_card)
+                self.decision_to_action(decision, dice, player.score_card)
                 valid_choice = decision
             except AlreadyPlayedError:
                 # keep on retrying till we have played a valid move
                 pass
 
-        return score_card
+        return player.score_card
 
     @staticmethod
     def decide(dice_rolls: [int], score_card: YahtzeeScoreCard) -> int:

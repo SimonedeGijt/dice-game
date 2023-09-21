@@ -33,6 +33,7 @@ class YahtzeeEnv(gym.Env):
         # Reset the game state
         self.game = Yahtzee(1)
         self.dice = self.game.get_dice_roll(self.game.players[0], False)
+        self.round = 1
         info = {'reset_info': 'Environment reset successfully', 'options_used': options}
         logging.info(info)
         return self._get_state(), info
@@ -52,6 +53,8 @@ class YahtzeeEnv(gym.Env):
         if reward == 0:
             # Calculate the reward as the difference in score
             reward = self.game.players[0].get_total() - prev_score
+
+        logging.info(f'Reward = {reward}')
 
         self.dice = self.game.get_dice_roll(self.game.players[0], False)
         state = self._get_state()

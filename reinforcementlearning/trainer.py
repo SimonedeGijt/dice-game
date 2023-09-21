@@ -24,10 +24,9 @@ if __name__ == '__main__':
     for episode in range(training_loop):
         logging.info(f'\n\nNEW GAME, nr: {episode / training_loop * 100:2f}')
         logging.info(f'----------')
+
         state = env.reset()
-
         count = 1
-
         while count <= 13:
             logging.info(f'ROUND {count}')
             action = agent.select_action(state)
@@ -39,6 +38,20 @@ if __name__ == '__main__':
 
     logging.info(f'----------')
     logging.info('GAME DONE')
+
+    logging.info('\n\nSTART VALIDATING')
+
+    state = env.reset()
+    count = 1
+    total_reward = 0
+    while count <= 13:
+        logging.info(f'ROUND {count}')
+        action = agent.select_action(state, False)
+        next_state, reward, done, _, _ = env.step(action)
+        total_reward += reward
+        state = next_state
+        count += 1
+        logging.info(f'ROUND FINISHED WITH TOTAL SCORE OF {total_reward}')
 
     logging.info('Close the trainer')
     env.close()

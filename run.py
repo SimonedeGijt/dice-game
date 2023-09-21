@@ -43,14 +43,14 @@ if __name__ == '__main__':
         # Player('random1', RandomDecisionService()),
         # Player('random2', RandomDecisionService()),
         Player('smart1', SmartDecisionService()),
-        # Player('smart2', SmartDecisionService())
+        Player('smart2', SmartDecisionService())
     ]
 
     winners_averages = {}
-    for i in range(10):
+    for i in range(1):
         logging.info(f'starting game {i}')
-        game = Yahtzee(1, players)
-        # logging.info('finished game')
+        game = Yahtzee(2, players)
+        logging.info('finished game')
 
         winner = game.play_game()
         if winner.name not in winners_averages:

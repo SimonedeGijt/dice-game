@@ -30,7 +30,7 @@ class Yahtzee:
         self.rolls = {}
         self.round_number += 1
 
-        logging.debug(f'playing round {self.round_number}')
+        logging.info(f'playing round {self.round_number}')
         for player in self.players:
             player.play_round(self)
 
@@ -43,8 +43,8 @@ class Yahtzee:
         for i in range(13):
             self.play_round()
 
-        # logging.info(f'winner is {self.get_winner().name}')
-        # logging.info(f'card for {self.get_winner().name}: \n {self.get_winner().score_card}')
+        logging.info(f'winner is {self.get_winner().name}')
+        logging.info(f'card for {self.get_winner().name}: \n {self.get_winner().score_card}')
 
         return self.get_winner()
 

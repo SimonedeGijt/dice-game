@@ -7,7 +7,7 @@ from gym import spaces
 
 from model.excpetion import AlreadyPlayedError
 from model.game import Yahtzee
-from service.decisionservice import DecisionService
+from service.randomdecisionservice import RandomDecisionService
 
 
 class YahtzeeEnv(gym.Env):
@@ -16,28 +16,30 @@ class YahtzeeEnv(gym.Env):
 
         # Define action and observation spaces
         self.action_space = spaces.Discrete(13)  # 13 different scoring categories
-        self.observation_space = spaces.Box(low=np.array([1, 1, 1, 1, 1, 1] + [-1] * 13),
-                                            high=np.array([6, 6, 6, 6, 6, 6] + [50] * 13),
+        self.observation_space = spaces.Box(low=np.array([0, 0, 0, 0, 0, 0] + [-1] * 13),
+                                            high=np.array([5, 5, 5, 5, 5, 5] + [50] * 13),
                                             dtype=np.int)
+        self.reward_range = (-500, 50)
+
 
         # Initialize game-specific variables
         self.game = Yahtzee(1)
-        self.decision_service = DecisionService()
+        self.decision_service = RandomDecisionService()
         self.dice = self.game.recognition_service.dice_rols(None)
 
     def reset(self, seed: Optional[int] = None, options: Optional[dict] = None):
         # Reset the game state
         self.game = Yahtzee(1)
+        self.dice = self.game.recognition_service.dice_rols(None)
         return self._get_state()
 
     def step(self, action: int):
         # Store the total score before the action
-
         prev_score = self.game.players[0].get_total()  # one player is assumed
         reward = 0
         try:
             # play the action in the round
-            self.decision_service.decision_to_action(action, self.dice, self.game.players[0].score_card)
+            self.decision_service.decision_to_action(action, self.dice, self.game.players[0]. )
         except AlreadyPlayedError:
             # a move was tried that is not allowed
             reward = -500
@@ -55,9 +57,30 @@ class YahtzeeEnv(gym.Env):
         return state, reward, done, {}
 
     def _get_state(self, ):
-        # Convert the dice rolls to the frequency count representation
         counts = Counter(self.dice)
-        state = [counts[i] for i in range(1, 7)]
-        return np.array(state)
+        dice_state = [counts[i] for i in range(1, 7)]
+
+        # Get the scorecard state
+        scorecard = self.game.players[0].score_card[-1]
+        scorecard_state = [
+            scorecard.upper_section.aces,
+            scorecard.upper_section.twos,
+            scorecard.upper_section.threes,
+            scorecard.upper_section.fours,
+            scorecard.upper_section.fives,
+            scorecard.upper_section.sixes,
+            scorecard.lower_section.three_of_a_kind,
+            scorecard.lower_section.four_of_a_kind,
+            scorecard.lower_section.full_house,
+            scorecard.lower_section.small_straight,
+            scorecard.lower_section.large_straight,
+            scorecard.lower_section.yahtzee,
+            scorecard.lower_section.chance
+        ]
+
+        # Replace None with -1
+        scorecard_state = [-1 if x is None else x for x in scorecard_state]
+
+        return np.array(dice_state + scorecard_state)
 
 # Example usage:

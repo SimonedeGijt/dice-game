@@ -1,29 +1,29 @@
 import random
 
+from model.excpetion import AlreadyPlayedError
 from model.yahtzeescorecard import YahtzeeScoreCard
-from service import yahtzeeenv
-from service.yahtzeeenv import YahtzeeEnv
 
 
-class DecisionService:
-    def __init__(self):
-        self.rl: YahtzeeEnv = yahtzeeenv.YahtzeeEnv()
+class RandomDecisionService:
+    def play_optimal_play(self, dice_rolls: [int], score_card: YahtzeeScoreCard) -> YahtzeeScoreCard:
+        valid_choice = 0
+        while valid_choice == 0:
+            decision = self.decide(dice_rolls, score_card)
+            try:
+                self.decision_to_action(decision, dice_rolls, score_card)
+                valid_choice = decision
+            except AlreadyPlayedError:
+                # keep on retrying till we have played a valid move
+                pass
 
-    def decide_optimal_play(self, dice_rolls: [int], score_card: YahtzeeScoreCard) -> int:
-        # find first thing that is not filled in
-        # # if nothing is filled in, find the thing that is most likely to be filled in
-        #
-        # self.rl.reset()
-        # done = False
-        # while not done:
-        #     action = 4  # Random action for testing
-        #     obs, reward, done, _ = self.rl.step(action)
-        #
-        # return random.Random().randint(1, 13)
+        return score_card
 
+    @staticmethod
+    def decide(dice_rolls: [int], score_card: YahtzeeScoreCard) -> int:
         return random.Random().randint(1, 13)
 
-    def decision_to_action(self, decision: int, dice_rolls: [int], score_card: YahtzeeScoreCard):
+    @staticmethod
+    def decision_to_action(decision: int, dice_rolls: [int], score_card: YahtzeeScoreCard):
         if decision == 1:
             score_card.play_ones(dice_rolls)
         elif decision == 2:

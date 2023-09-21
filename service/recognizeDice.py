@@ -1,11 +1,11 @@
 import os
-
+import logging
 import cv2
 import numpy as np
 from sklearn.cluster import DBSCAN
 
 env = os.getenv('ENV', 'dev')
-print("Environement is: " + env)
+logging.info("Environement is: " + env)
 if env != 'dev':
     from service.pictureService import take_picture
 
@@ -131,7 +131,7 @@ def recognize_dice_in_image(file_name=''):
         if(len(new_result) == 5 or abs(len(new_result) - 5) < abs(len(dice_values)-5)):
             dice_values = new_result
 
-    print(dice_values)
+    logging.info(dice_values)
 
     return dice_values
 

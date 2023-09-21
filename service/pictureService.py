@@ -1,8 +1,11 @@
+import logging
+
 from picamera2 import Picamera2
 import time
 from libcamera import controls
 from service.diceController import roll_dice
 import numpy as np
+import logging
 
 
 picam2 = Picamera2()
@@ -14,11 +17,11 @@ picam2.set_controls({'AfMode': controls.AfModeEnum.Continuous})
 
 def take_picture():
     roll_dice()
-    print("Waiting for steady dice and focus")
+    logging.debug("Waiting for steady dice and focus")
     time.sleep(5)
     image = picam2.capture_image("main")
     frame = np.array(image)
-    print("captured image")
+    logging.debug("captured image")
     return frame
 
 

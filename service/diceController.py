@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 import time
+import logging
 
 # Set the GPIO mode to BCM
 GPIO.setmode(GPIO.BCM)
@@ -14,11 +15,11 @@ GPIO.setup(relay_pin, GPIO.OUT)
 def roll_dice():
     # Turn on the relay
     GPIO.output(relay_pin, GPIO.HIGH)
-    print("Rolling a die")
+    logging.debug("Rolling a die")
 
     # Wait for 5 seconds
     time.sleep(2)
 
     # Turn off the relay
     GPIO.output(relay_pin, GPIO.LOW)
-    print("Done rolling a die")
+    logging.debug("Done rolling a die")

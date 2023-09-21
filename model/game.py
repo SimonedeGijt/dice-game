@@ -10,7 +10,7 @@ possible_player_names = ['Simone', 'Stefan', 'Dennis', 'Roy', 'Pieter', 'Marcel'
 
 class Yahtzee:
     def __init__(self, number_of_players: int, players: [Player] = None):
-        logging.debug(f'starting game with {number_of_players} players')
+        logging.info(f'starting game with {number_of_players} players')
         self._dice_service: DiceService = DiceService()
         self.rolls = {}  # dict storing the number of rolls of the current round for each player
         self.round_number = 0
@@ -30,11 +30,11 @@ class Yahtzee:
         self.rolls = {}
         self.round_number += 1
 
-        logging.debug(f'playing round {self.round_number}')
+        logging.info(f'playing round {self.round_number}')
         for player in self.players:
             player.play_round(self)
 
-        logging.debug(f'round finished, scores: {[player.get_total() for player in self.players]}')
+        logging.info(f'round finished, scores: {[player.get_total() for player in self.players]}')
 
     def play_game(self):
         for player in self.players:
@@ -43,8 +43,8 @@ class Yahtzee:
         for i in range(13):
             self.play_round()
 
-        logging.debug(f'winner is {self.get_winner().name}')
-        logging.debug(f'card for {self.get_winner().name}: \n {self.get_winner().score_card}')
+        logging.info(f'winner is {self.get_winner().name}')
+        logging.info(f'card for {self.get_winner().name}: \n {self.get_winner().score_card}')
 
     def get_winner(self) -> Player:
         winner = self.players[0]

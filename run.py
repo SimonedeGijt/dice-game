@@ -41,12 +41,10 @@ if __name__ == '__main__':
 
     logging.info('starting game')
     players = [
-        Player('random1', RandomDecisionService()),
-        Player('random2', RandomDecisionService()),
         Player('smart1', SmartDecisionService()),
-        Player('smart2', SmartDecisionService()),
+        Player('smart2', SmartDecisionService())
     ]
-    game = Yahtzee(4, players)
+    game = Yahtzee(2, players)
     game.play_game()
 
     logging.info('finished game')

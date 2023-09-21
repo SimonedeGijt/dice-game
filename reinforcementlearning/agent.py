@@ -21,8 +21,3 @@ class QLearningAgent:
         next_max = np.max(self.q_table[next_state, :])
         new_value = (1 - self.learning_rate) * old_value + self.learning_rate * (reward + self.discount_factor * next_max)
         self.q_table[state, action] = new_value
-
-env = gym.make("Taxi-v3")
-agent = QLearningAgent(env.action_space.n, env.observation_space.n)
-
-

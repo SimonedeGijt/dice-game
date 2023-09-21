@@ -7,7 +7,7 @@ from gym import spaces
 
 from model.excpetion import AlreadyPlayedError
 from model.game import Yahtzee
-from service.decisionservice import DecisionService
+from service.randomdecisionservice import RandomDecisionService
 
 
 class YahtzeeEnv(gym.Env):
@@ -22,7 +22,7 @@ class YahtzeeEnv(gym.Env):
 
         # Initialize game-specific variables
         self.game = Yahtzee(1)
-        self.decision_service = DecisionService()
+        self.decision_service = RandomDecisionService()
         self.dice = self.game.recognition_service.dice_rols(None)
 
     def reset(self, seed: Optional[int] = None, options: Optional[dict] = None):

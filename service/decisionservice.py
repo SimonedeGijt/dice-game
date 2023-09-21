@@ -1,7 +1,6 @@
 import itertools
 import logging
 import random
-import statistics
 
 from model.excpetion import AlreadyPlayedError
 from model.yahtzeescorecard import YahtzeeScoreCard
@@ -81,7 +80,7 @@ class SmartDecisionService(RandomDecisionService):
 
         results_per_combination = {}
         for combination in combinations:
-            _, best_result = self.simulate_re_rolls(game, player, combination)
+            best_result = self.simulate_re_rolls(game, player, combination)
             results_per_combination[combination] = best_result
 
         best_combination = max(results_per_combination, key=lambda k: results_per_combination[k])
@@ -111,12 +110,16 @@ class SmartDecisionService(RandomDecisionService):
                 results[best_option] = []
             results[best_option].append(best_score)
 
+        # TODO show median of option total instead of only the best
         # find the option that has the most results and return it with the average score
-        best_option = max(results, key=lambda k: len(results[k]))
-        best_score = statistics.median(results[best_option])
-        # best_score = sum(results[best_option]) / len(results[best_option])
+        # best_option = max(results, key=lambda k: len(results[k]))
+        combined_values = [value for sublist in results.values() for value in sublist]
 
-        return best_option, best_score
+        # median_score = statistics.median(results[best_option])
+        # median_score = statistics.median(combined_values)
+        score = sum(combined_values) / len(combined_values)
+
+        return score
 
     @staticmethod
     def get_dice_combinations(dice):

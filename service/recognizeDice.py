@@ -1,91 +1,98 @@
 import cv2
 import numpy as np
-from PIL import Image
-from sklearn import cluster
+from sklearn.cluster import DBSCAN
+import pictureService
 
-params = cv2.SimpleBlobDetector_Params()
+import cv2
 
-params.filterByInertia
-params.minInertiaRatio = 0.6
+def find_contour_clusters(contours, epsilon, min_samples):
+    # Extract centroid coordinates from contours
+    centroids = []
 
-detector = cv2.SimpleBlobDetector_create(params)
+    for contour in contours:
+        M = cv2.moments(contour)
+        cX = int(M["m10"] / M["m00"])
+        cY = int(M["m01"] / M["m00"])
+        centroids.append([cX, cY])
 
+    centroids = np.array(centroids)
 
-def get_blobs(frame):
-    frame_blurred = cv2.medianBlur(frame, 7)
-    frame_gray = cv2.cvtColor(frame_blurred, cv2.COLOR_BGR2GRAY)
-    blobs = detector.detect(frame_gray)
+    # Apply DBSCAN clustering
+    clustering = DBSCAN(eps=epsilon, min_samples=min_samples).fit(centroids)
 
-    return blobs
+    # Get labels assigned to each centroid
+    labels = clustering.labels_
 
+    # Create a dictionary to store clusters
+    clusters = {}
+    for i, label in enumerate(labels):
+        if label != -1:  # Ignore noise points (label -1)
+            if label not in clusters:
+                clusters[label] = []
 
-def get_dice_from_blobs(blobs):
-    # Get centroids of all blobs
-    X = []
-    for b in blobs:
-        pos = b.pt
+            clusters[label].append(contours[i])
 
-        if pos != None:
-            X.append(pos)
+    return list(clusters.values())
+def find_dice_values(img, blur):
 
-    X = np.asarray(X)
+    # Convert the image to grayscale
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    if len(X) > 0:
-        # Important to set min_sample to 0, as a dice may only have one dot
-        clustering = cluster.DBSCAN(eps=40, min_samples=1).fit(X)
+    # Apply Gaussian blur to reduce noise
+    blurred = cv2.GaussianBlur(gray, (blur, blur), 0)
 
-        # Find the largest label assigned + 1, that's the number of dice found
-        num_dice = max(clustering.labels_) + 1
+    #cv2.imshow("show blurred",blurred)
+    #cv2.waitKey()
+    # Use Canny edge detection to detect edges
+    edges = cv2.Canny(blurred, 50, 150)
 
-        dice = []
+    # Find contours in the image
+    contours, _ = cv2.findContours(edges.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-        # Calculate centroid of each dice, the average between all a dice's dots
-        for i in range(num_dice):
-            X_dice = X[clustering.labels_ == i]
+    # Initialize an empty list to store results
+    dice_dot_contours = []
 
-            centroid_dice = np.mean(X_dice, axis=0)
+    for contour in contours:
+        x, y, w, h = cv2.boundingRect(contour)
+        cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 2)
+        # Filter out small contours
+        if cv2.contourArea(contour) > 1500:
+            # Get bounding box coordinates
+            x, y, w, h = cv2.boundingRect(contour)
 
-            dice.append([len(X_dice), *centroid_dice])
+            if(w > 100):
+                continue
 
-        return dice
+            # Crop the region of interest
+            # roi = gray[y:y+h, x:x+w]
+            cv2.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), 2)
 
-    else:
-        return []
-
-
-def overlay_info(frame, dice, blobs):
-    # Overlay blobs
-    for b in blobs:
-        pos = b.pt
-        r = b.size / 2
-
-        cv2.circle(frame, (int(pos[0]), int(pos[1])),
-                   int(r), (255, 0, 0), 2)
-
-    # Overlay dice number
-    for d in dice:
-        # Get textsize for text centering
-        textsize = cv2.getTextSize(
-            str(d[0]), cv2.FONT_HERSHEY_PLAIN, 3, 2)[0]
-
-        cv2.putText(frame, str(d[0]),
-                    (int(d[1] - textsize[0] / 2),
-                     int(d[2] + textsize[1] / 2)),
-                    cv2.FONT_HERSHEY_PLAIN, 3, (0, 255, 0), 2)
+            dice_dot_contours.append(contour)
 
 
-def load_dice_img(lnk):
-    im = Image.open(lnk)
-    im = np.asarray(im)
-    return im
+    diceValues = find_contour_clusters(dice_dot_contours, 200, 1)
+
+    cv2.imshow("show contours",img)
+    cv2.waitKey()
+
+    result = []
+
+    for list in diceValues:
+        result.append(len(list))
+
+    return result
 
 
-frame = load_dice_img('/home/skikk/src/openValue/dice-game/tests/resources/pictures/test0.jpg')
+def recognizeDiceInImage():
+    fileName = "tempFile.jpg"
+    pictureService.takePicture(fileName)
+    img = cv2.imread(fileName)
+    dicevalues = find_dice_values(img,9)
+    if(len(dicevalues) != 5) :
+        dicevalues = find_dice_values(fileName, 15)
 
-blobs = get_blobs(frame)
-dice = get_dice_from_blobs(blobs)
-out_frame = overlay_info(frame, dice, blobs)
+    print(dicevalues)
+    return dicevalues
 
 print('iets')
-# When everything is done, release the capture
-cv2.destroyAllWindows()
+recognizeDiceInImage()

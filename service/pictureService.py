@@ -1,7 +1,7 @@
 from picamera2 import Picamera2
 import time
 from libcamera import controls
-import diceController
+from service.diceController import roll_dice
 import numpy as np
 
 
@@ -13,7 +13,7 @@ picam2.set_controls({'AfMode': controls.AfModeEnum.Continuous})
 
 
 def take_picture():
-    diceController.roll_dice()
+    roll_dice()
     print("Waiting for steady dice and focus")
     time.sleep(5)
     image = picam2.capture_image("main")

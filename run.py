@@ -58,4 +58,4 @@ if __name__ == '__main__':
 
         winners_averages[winner.name].append(winner.get_total())
 
-    logging.info(f'averages: {winners_averages}, average: {sum(winners_averages["smart1"]) / len(winners_averages["smart1"])}')
+    logging.info(f'averages: {winners_averages}, \naverage: {sum(winners_averages["smart1"]) / len(winners_averages["smart1"])}')

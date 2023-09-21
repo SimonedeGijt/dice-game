@@ -100,7 +100,7 @@ class SmartDecisionService(RandomDecisionService):
     def simulate_re_rolls(self, game, player, combination) -> (int, int):
         results = {}
 
-        for _ in range(30):
+        for _ in range(15):
             new_dice = game.get_dice_roll(player, False, 5 - len(combination))
             new_dice.extend(combination)
 
@@ -110,13 +110,8 @@ class SmartDecisionService(RandomDecisionService):
                 results[best_option] = []
             results[best_option].append(best_score)
 
-        # TODO show median of option total instead of only the best
         # find the option that has the most results and return it with the average score
-        # best_option = max(results, key=lambda k: len(results[k]))
         combined_values = [value for sublist in results.values() for value in sublist]
-
-        # median_score = statistics.median(results[best_option])
-        # median_score = statistics.median(combined_values)
         score = sum(combined_values) / len(combined_values)
 
         return score
@@ -137,12 +132,22 @@ class SmartDecisionService(RandomDecisionService):
         best_option = 1
         best_score = 0
 
-        for action in range(0, 13):
+        for action in range(1, 13):
             try:
                 points = self.decision_to_action(action, dice, player.score_card, True)
                 if points >= best_score:  # its better to fill one of the higher options since we roll it less often
                     best_score = points
                     best_option = action
+            except AlreadyPlayedError:
+                pass
+
+        # only try chance if the best score is way lower than the sum of the points, so that we can save chance for later
+        if best_score <= sum(dice) - 10:
+            try:
+                points = self.decision_to_action(0, dice, player.score_card, True)
+                if points >= best_score:  # its better to fill one of the higher options since we roll it less often
+                    best_score = points
+                    best_option = 0
             except AlreadyPlayedError:
                 pass
 

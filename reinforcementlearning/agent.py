@@ -14,7 +14,7 @@ class QLearningAgent:
         if np.random.uniform(0, 1) < self.exploration_prob:
             return np.random.choice(self.action_space_size)
         else:
-            return np.argmax(self.q_table[state[0][0], :])
+            return np.argmax(self.q_table[state[0], :])
 
     def learn(self, state, action, reward, next_state):
         old_value = self.q_table[state[0], action]

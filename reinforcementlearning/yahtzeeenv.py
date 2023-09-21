@@ -3,12 +3,12 @@ from typing import Optional
 
 import gym
 import numpy as np
+import logging
 from gym import spaces
-from gym.core import ObsType
 
 from model.excpetion import AlreadyPlayedError
 from model.game import Yahtzee
-from service.randomdecisionservice import RandomDecisionService
+from service.decisionservice import RandomDecisionService
 
 
 class YahtzeeEnv(gym.Env):
@@ -26,15 +26,19 @@ class YahtzeeEnv(gym.Env):
         self.game = None
         self.decision_service = RandomDecisionService()
         self.dice = None
+        self.round = 1
 
     def reset(self, seed: Optional[int] = None, options: Optional[dict] = None):
+        logging.info(f'Start with resetting env')
         # Reset the game state
         self.game = Yahtzee(1)
-        self.dice = self.game.dice_service.dice_rols(None)
+        self.dice = self.game.get_dice_roll(self.game.players[0], False)
         info = {'reset_info': 'Environment reset successfully', 'options_used': options}
+        logging.info(info)
         return self._get_state(), info
 
     def step(self, action: int):
+        logging.info(f'-> Start with round {self.round}, perform action {action}')
         # Store the total score before the action
         prev_score = self.game.players[0].get_total()  # one player is assumed
         reward = 0
@@ -49,14 +53,17 @@ class YahtzeeEnv(gym.Env):
             # Calculate the reward as the difference in score
             reward = self.game.players[0].get_total() - prev_score
 
-        self.dice = self.game.dice_service.dice_rols(None)
+        self.dice = self.game.get_dice_roll(self.game.players[0], False)
         state = self._get_state()
 
         # Check if the game is over
         done = self.game.is_finished()
-        info = {'reset_info': 'Environment reset successfully'}
+        info = {f'Step_{self.round}': f'Step {self.round} is done'}
+        truncated = False
+        self.round += 1
 
-        return state, reward, done, {}, info
+        logging.info(info)
+        return state, reward, done, truncated, info
 
     def _get_state(self, ):
         counts = Counter(self.dice)

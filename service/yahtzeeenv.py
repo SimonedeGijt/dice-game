@@ -33,7 +33,6 @@ class YahtzeeEnv(gym.Env):
 
     def step(self, action: int):
         # Store the total score before the action
-
         prev_score = self.game.players[0].get_total()  # one player is assumed
         reward = 0
         try:

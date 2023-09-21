@@ -1,5 +1,4 @@
 from stable_baselines3 import PPO
-from stable_baselines3.common.envs import DummyVecEnv
 
 from run import setup_logger
 from service.yahtzeeenv import YahtzeeEnv

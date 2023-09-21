@@ -7,7 +7,7 @@ from sklearn.cluster import DBSCAN
 env = os.getenv('ENV', 'dev')
 print("Environement is: " + env)
 if env != 'dev':
-    import pictureService
+    from service.pictureService import take_picture
 
 
 def find_contour_clusters(contours, epsilon, min_samples):
@@ -113,7 +113,7 @@ def recognize_dice_in_image(file_name=''):
     if env == 'dev':
         img = cv2.imread(file_name)
     else:
-        img = pictureService.take_picture()
+        img = take_picture()
 
     blur = 9
     min_contour = 250

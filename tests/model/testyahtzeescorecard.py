@@ -10,6 +10,7 @@ from model.yahtzeescorecard import YahtzeeScoreCard
     ([1, 2, 3, 4, 1], 30),
     ([1, 2, 3, 2, 3], 0),
     ([6, 3, 4, 2, 5], 30),
+    ([3, 4, 1, 5, 1], 0),
 ])
 def test_small_straight(dice_rolls, expected_score):
     score_card = YahtzeeScoreCard()

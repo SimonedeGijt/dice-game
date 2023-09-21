@@ -4,7 +4,7 @@ from colorlog import ColoredFormatter
 
 from model.game import Yahtzee
 from model.player import Player
-from service.decisionservice import RandomDecisionService, SmartDecisionService
+from service.decisionservice import SmartDecisionService
 
 
 def setup_logger():
@@ -39,12 +39,23 @@ def setup_logger():
 if __name__ == '__main__':
     setup_logger()
 
-    logging.info('starting game')
     players = [
+        # Player('random1', RandomDecisionService()),
+        # Player('random2', RandomDecisionService()),
         Player('smart1', SmartDecisionService()),
-        Player('smart2', SmartDecisionService())
+        # Player('smart2', SmartDecisionService())
     ]
-    game = Yahtzee(2, players)
-    game.play_game()
 
-    logging.info('finished game')
+    winners_averages = {}
+    for i in range(10):
+        logging.info(f'starting game {i}')
+        game = Yahtzee(1, players)
+        # logging.info('finished game')
+
+        winner = game.play_game()
+        if winner.name not in winners_averages:
+            winners_averages[winner.name] = []
+
+        winners_averages[winner.name].append(winner.get_total())
+
+    logging.info(f'averages: {winners_averages}, average: {sum(winners_averages["smart1"]) / len(winners_averages["smart1"])}')

@@ -73,6 +73,6 @@ class SmartDecisionService(RandomDecisionService):
             except AlreadyPlayedError:
                 pass
 
-        logging.info(f'{player.name} chose {best_option} for {dice} with {best_score} points')
+        logging.debug(f'{player.name} chose {best_option} for {dice} with {best_score} points')
 
         return dice, best_option

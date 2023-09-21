@@ -9,6 +9,11 @@ class YahtzeeScoreCard:
         self.upper_section = UpperSection()
         self.lower_section = LowerSection()
 
+    def __str__(self):
+        upper_section_str = "Upper Section:\n" + "\n".join([f"    {k}: {v if v is not None else 'None'}" for k, v in vars(self.upper_section).items()])
+        lower_section_str = "Lower Section:\n" + "\n".join([f"    {k}: {v if v is not None else 'None'}" for k, v in vars(self.lower_section).items()])
+        return f"{upper_section_str}\n\n{lower_section_str}"
+
     def is_full(self) -> bool:
         return all([val is not None for attr, val in vars(self.upper_section).items()]) and \
             all([val is not None for attr, val in vars(self.lower_section).items()])

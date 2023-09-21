@@ -1,3 +1,5 @@
+import logging
+
 from model.yahtzeescorecard import YahtzeeScoreCard
 from service.decisionservice import RandomDecisionService
 
@@ -16,4 +18,5 @@ class Player:
         self.score_card = YahtzeeScoreCard()
 
     def play_round(self, game):
+        logging.info(f'playing round for {self.name}')
         self.score_card = self.decision_model.play_optimal_play(game, self)

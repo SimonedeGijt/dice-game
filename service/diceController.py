@@ -11,7 +11,7 @@ relay_pin = 14  # Change this to the GPIO pin you're using
 GPIO.setup(relay_pin, GPIO.OUT)
 
 
-def rollDice():
+def roll_dice():
     # Turn on the relay
     GPIO.output(relay_pin, GPIO.HIGH)
     print("Rolling a die")

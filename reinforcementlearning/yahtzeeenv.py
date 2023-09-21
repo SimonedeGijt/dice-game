@@ -4,6 +4,7 @@ from typing import Optional
 import gym
 import numpy as np
 from gym import spaces
+from gym.core import ObsType
 
 from model.excpetion import AlreadyPlayedError
 from model.game import Yahtzee
@@ -16,22 +17,22 @@ class YahtzeeEnv(gym.Env):
 
         # Define action and observation spaces
         self.action_space = spaces.Discrete(13)  # 13 different scoring categories
-        self.observation_space = spaces.Box(low=np.array([0, 0, 0, 0, 0, 0] + [-1] * 13),
-                                            high=np.array([5, 5, 5, 5, 5, 5] + [50] * 13),
-                                            dtype=np.int)
+        self.observation_space = spaces.Box(low=np.array([0, 0, 0, 0, 0, 0] + [0] * 13),
+                                            high=np.array([5, 5, 5, 5, 5, 5] + [1] * 13),
+                                            dtype=int)
         self.reward_range = (-500, 50)
 
-
         # Initialize game-specific variables
-        self.game = Yahtzee(1)
+        self.game = None
         self.decision_service = RandomDecisionService()
-        self.dice = self.game.recognition_service.dice_rols(None)
+        self.dice = None
 
     def reset(self, seed: Optional[int] = None, options: Optional[dict] = None):
         # Reset the game state
         self.game = Yahtzee(1)
         self.dice = self.game.recognition_service.dice_rols(None)
-        return self._get_state()
+        info = {'reset_info': 'Environment reset successfully', 'options_used': options}
+        return self._get_state(), info
 
     def step(self, action: int):
         # Store the total score before the action
@@ -39,7 +40,7 @@ class YahtzeeEnv(gym.Env):
         reward = 0
         try:
             # play the action in the round
-            self.decision_service.decision_to_action(action, self.dice, self.game.players[0]. )
+            self.decision_service.decision_to_action(action, self.dice, self.game.players[0].score_card)
         except AlreadyPlayedError:
             # a move was tried that is not allowed
             reward = -500
@@ -53,15 +54,16 @@ class YahtzeeEnv(gym.Env):
 
         # Check if the game is over
         done = self.game.is_finished()
+        info = {'reset_info': 'Environment reset successfully'}
 
-        return state, reward, done, {}
+        return state, reward, done, {}, info
 
     def _get_state(self, ):
         counts = Counter(self.dice)
         dice_state = [counts[i] for i in range(1, 7)]
 
         # Get the scorecard state
-        scorecard = self.game.players[0].score_card[-1]
+        scorecard = self.game.players[0].score_card
         scorecard_state = [
             scorecard.upper_section.aces,
             scorecard.upper_section.twos,
@@ -79,7 +81,7 @@ class YahtzeeEnv(gym.Env):
         ]
 
         # Replace None with -1
-        scorecard_state = [-1 if x is None else x for x in scorecard_state]
+        scorecard_state = [0 if x is None else 1 for x in scorecard_state]
 
         return np.array(dice_state + scorecard_state)
 

@@ -30,7 +30,7 @@ class YahtzeeEnv(gym.Env):
     def reset(self, seed: Optional[int] = None, options: Optional[dict] = None):
         # Reset the game state
         self.game = Yahtzee(1)
-        self.dice = self.game.recognition_service.dice_rols(None)
+        self.dice = self.game.dice_service.dice_rols(None)
         info = {'reset_info': 'Environment reset successfully', 'options_used': options}
         return self._get_state(), info
 
@@ -49,7 +49,7 @@ class YahtzeeEnv(gym.Env):
             # Calculate the reward as the difference in score
             reward = self.game.players[0].get_total() - prev_score
 
-        self.dice = self.game.recognition_service.dice_rols(None)
+        self.dice = self.game.dice_service.dice_rols(None)
         state = self._get_state()
 
         # Check if the game is over

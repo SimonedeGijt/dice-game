@@ -1,29 +1,36 @@
 import logging
 import random
 
+from model.excpetion import NoRerollLeftError
 from model.player import Player
-from service.recognition import RecognitionService
+from service.recognition import DiceService
 
 possible_player_names = ['Simone', 'Stefan', 'Dennis', 'Roy', 'Pieter', 'Marcel', 'Julian', 'Martin', 'Piter', 'Thijs-bleh', 'Nicolette']
 
 
 class Yahtzee:
-    def __init__(self, number_of_players: int):
+    def __init__(self, number_of_players: int, players: [Player] = None):
         logging.info(f'starting game with {number_of_players} players')
-        self.recognition_service: RecognitionService = RecognitionService()
+        self._dice_service: DiceService = DiceService()
+        self.rolls = {}  # dict storing the number of rolls of the current round for each player
 
         self.players: [Player] = []
 
-        for i in range(number_of_players):
-            randint = random.Random().randint(0, len(possible_player_names) - 1)
-            self.players.append(Player(possible_player_names[randint]))
+        if players is not None:
+            self.players = players
+        else:
+            for i in range(number_of_players):
+                randint = random.Random().randint(0, len(possible_player_names) - 1)
+                self.players.append(Player(possible_player_names[randint]))
 
         logging.info(f'started with: {[player.name for player in self.players]}')
 
     def play_round(self):
+        self.rolls = {}
+
         logging.info('playing round')
         for player in self.players:
-            player.play_round(self.recognition_service.dice_rols(None))
+            player.play_round(self)
 
         logging.info(f'round finished, scores: {[player.get_total() for player in self.players]}')
 
@@ -46,3 +53,12 @@ class Yahtzee:
 
     def is_finished(self) -> bool:
         return all([player.score_card.is_full() for player in self.players])
+
+    def get_dice_roll(self, player: Player, number_of_dice: int = 5) -> [int]:
+        if player not in self.rolls:
+            self.rolls[player] = 0
+        if self.rolls[player] >= 3:
+            raise NoRerollLeftError('no re-rolls left')
+
+        self.rolls[player] += 1
+        return self._dice_service.dice_rols(None, number_of_dice)

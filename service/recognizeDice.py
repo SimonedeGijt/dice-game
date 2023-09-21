@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 from sklearn.cluster import DBSCAN
 
-env = os.getenv('ENV')
+env = os.getenv('ENV', default='dev')
 print("Environement is: " + env)
 if env != 'dev':
     import pictureService

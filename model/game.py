@@ -9,16 +9,19 @@ possible_player_names = ['Simone', 'Stefan', 'Dennis', 'Roy', 'Pieter', 'Marcel'
 
 
 class Yahtzee:
-    def __init__(self, number_of_players: int):
+    def __init__(self, number_of_players: int, players: [Player] = None):
         logging.info(f'starting game with {number_of_players} players')
         self._dice_service: DiceService = DiceService()
         self.rolls = {}  # dict storing the number of rolls of the current round for each player
 
         self.players: [Player] = []
 
-        for i in range(number_of_players):
-            randint = random.Random().randint(0, len(possible_player_names) - 1)
-            self.players.append(Player(possible_player_names[randint]))
+        if players is not None:
+            self.players = players
+        else:
+            for i in range(number_of_players):
+                randint = random.Random().randint(0, len(possible_player_names) - 1)
+                self.players.append(Player(possible_player_names[randint]))
 
         logging.info(f'started with: {[player.name for player in self.players]}')
 

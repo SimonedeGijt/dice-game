@@ -39,7 +39,7 @@ class YahtzeeEnv(gym.Env):
         reward = 0
         try:
             # play the action in the round
-            self.decision_service.decision_to_action(action, self.dice, self.game.players[0].score_card)
+            self.decision_service.decision_to_action(action, self.dice, self.game.players[0]. )
         except AlreadyPlayedError:
             # a move was tried that is not allowed
             reward = -500
